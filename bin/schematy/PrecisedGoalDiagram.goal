@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GoalDiagram version="1.1" name="Goal Diagram" embedded="false">
+	<Goal id="40bff1b5-7bb1-4da8-a93a-40baf10956e0" name="Manage race" number="0" preference="1.0" x="355" y="21" width="-1" height="-1" definition="" description="" color="No">
+		<and>
+			<child>6beba269-1f0b-44ba-ad14-706d622d48ca</child>
+		</and>
+		<and>
+			<child>152ee91d-f7ef-4190-b6eb-395c1a01c4c5</child>
+		</and>
+		<and>
+			<child>c7e82a82-719a-4a44-b941-cb6bb3e20e83</child>
+		</and>
+	</Goal>
+	<Goal id="6beba269-1f0b-44ba-ad14-706d622d48ca" name="Make the track" number="1" preference="1.0" x="12" y="126" width="-1" height="-1" definition="" description="" color="No">
+		<and>
+			<child>85a61675-a0ae-4a1c-8f89-e716d29ed8da</child>
+		</and>
+		<and>
+			<child>8a0accda-64d0-4904-958d-7095f1400e53</child>
+		</and>
+	</Goal>
+	<Goal id="85a61675-a0ae-4a1c-8f89-e716d29ed8da" name="Load track" number="1.1" preference="1.0" x="-2" y="342" width="-1" height="-1" definition="" description="" color="No">
+			<parameter name="track" collection="" type="ASCII file"/>
+		<precedes>
+			<child>8a0accda-64d0-4904-958d-7095f1400e53</child>
+		</precedes>
+	</Goal>
+	<Goal id="8a0accda-64d0-4904-958d-7095f1400e53" name="Draw track" number="1.2" preference="1.0" x="98" y="236" width="-1" height="-1" definition="" description="" color="No">
+		<precedes>
+			<child>152ee91d-f7ef-4190-b6eb-395c1a01c4c5</child>
+		</precedes>
+	</Goal>
+	<Goal id="152ee91d-f7ef-4190-b6eb-395c1a01c4c5" name="Do the race" number="2" preference="1.0" x="285" y="196" width="-1" height="-1" definition="" description="" color="No">
+		<and>
+			<child>1a1140a1-a3ee-4467-a626-aafc556e6847</child>
+		</and>
+		<and>
+			<child>868a1c11-4867-4671-94ce-b4aa0e50afb8</child>
+		</and>
+		<and>
+			<child>0a4695e9-f36c-481d-afe4-d2ebbb7c84c1</child>
+		</and>
+		<and>
+			<child>f2e7473f-6ca7-4a4f-9086-7bceefc7c91a</child>
+		</and>
+	</Goal>
+	<Goal id="1a1140a1-a3ee-4467-a626-aafc556e6847" name="Check cars" number="2.1" preference="1.0" x="186" y="296" width="-1" height="-1" definition="" description="" color="No">
+			<parameter name="x,y" collection="Collection" type="positions"/>
+		<precedes>
+			<child>868a1c11-4867-4671-94ce-b4aa0e50afb8</child>
+		</precedes>
+	</Goal>
+	<Goal id="868a1c11-4867-4671-94ce-b4aa0e50afb8" name="Choose strategies" number="2.2" preference="1.0" x="188" y="402" width="-1" height="-1" definition="" description="" color="No">
+			<parameter name="s" collection="Collection" type="strategies"/>
+		<precedes>
+			<child>0a4695e9-f36c-481d-afe4-d2ebbb7c84c1</child>
+		</precedes>
+	</Goal>
+	<Goal id="c7e82a82-719a-4a44-b941-cb6bb3e20e83" name="End the race" number="3" preference="1.0" x="404" y="122" width="-1" height="-1" definition="" description="" color="No">
+		<and>
+			<child>21fbb4c9-3a5a-4acf-ae0c-f150b5d8379f</child>
+		</and>
+		<and>
+			<child>968e6bfd-b3c1-4c5e-be71-5ee92ccdfada</child>
+		</and>
+	</Goal>
+	<Goal id="21fbb4c9-3a5a-4acf-ae0c-f150b5d8379f" name="Choose winner" number="3.1" preference="1.0" x="606" y="251" width="-1" height="-1" definition="" description="" color="No">
+			<parameter name="st" collection="Collection" type="standings"/>
+		<precedes>
+			<child>968e6bfd-b3c1-4c5e-be71-5ee92ccdfada</child>
+		</precedes>
+	</Goal>
+	<Goal id="968e6bfd-b3c1-4c5e-be71-5ee92ccdfada" name="Show times" number="3.2" preference="1.0" x="679" y="138" width="-1" height="-1" definition="" description="" color="No">
+			<parameter name="tm" collection="Collection" type="times"/>
+	</Goal>
+	<Goal id="0a4695e9-f36c-481d-afe4-d2ebbb7c84c1" name="Begin race" number="2.3" preference="1.0" x="353" y="309" width="-1" height="-1" definition="" description="" color="No">
+		<precedes>
+			<child>f2e7473f-6ca7-4a4f-9086-7bceefc7c91a</child>
+		</precedes>
+	</Goal>
+	<Goal id="f2e7473f-6ca7-4a4f-9086-7bceefc7c91a" name="Check position and assign pentalities" number="2.4" preference="1.0" x="561" y="368" width="-1" height="-1" definition="" description="" color="No">
+			<parameter name="x,y" collection="Collection" type="positions"/>
+			<parameter name="t" collection="Collection" type="time"/>
+		<precedes>
+			<child>c7e82a82-719a-4a44-b941-cb6bb3e20e83</child>
+		</precedes>
+	</Goal>
+</GoalDiagram>

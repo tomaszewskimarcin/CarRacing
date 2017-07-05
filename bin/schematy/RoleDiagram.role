@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RoleDiagram version="1.1" name="Role Diagram" embedded="false">
+	<Actor id="6bc11556-0734-436f-9024-9e7863f67d9a" name="Car" x="17" y="119" width="-1" height="-1">
+	</Actor>
+	<Actor id="dd51f301-4e5b-4cb3-ae8d-28d347433570" name="Judge" x="646" y="110" width="-1" height="-1">
+	</Actor>
+	<Role id="267eb8ed-9591-49fa-8930-5ee3927829de" name="Racer" x="171" y="46" width="-1" height="-1">
+		<achieves name="achieves" score="1.0">
+			<child>d05ab466-5e1d-4d61-9f27-32773736ce72</child>
+		</achieves>
+	</Role>
+	<Goal id="d05ab466-5e1d-4d61-9f27-32773736ce72" name="counts time" number="0" preference="1.0" x="302" y="132" width="-1" height="-1" definition="" description="" color="No">
+	</Goal>
+	<Goal id="26c7d935-d40e-4f89-9333-94d5ef453686" name="accept penalities" number="1" preference="1.0" x="93" y="139" width="-1" height="-1" definition="" description="" color="No">
+	</Goal>
+</RoleDiagram>

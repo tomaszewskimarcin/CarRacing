@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OrgDiagram version="1.1" name="Organization Diagram" embedded="true">
+	<Organization id="9cd3d24d-e7ca-432e-aa04-22b215286a8f" name="Race Track" x="290" y="223" width="-1" height="-1">
+		<achieves name="achieves" score="1.0">
+			<child>9cf76697-fc67-4382-8105-95da7823d231</child>
+		</achieves>
+	</Organization>
+	<Goal id="9cf76697-fc67-4382-8105-95da7823d231" name="Do the race" number="0" preference="1.0" x="306" y="285" width="-1" height="-1" definition="" description="" color="No">
+	</Goal>
+	<Actor id="de51fa71-f528-47da-b2f7-aa9b3e2f268c" name="Car" x="319" y="26" width="-1" height="-1">
+		<protocol name="start from starting line">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="78" y="174"/>
+		</protocol>
+		<protocol name="overtake">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="292" y="133"/>
+		</protocol>
+		<protocol name="listen to strategies">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="372" y="155"/>
+		</protocol>
+		<protocol name="slow down for pentalities">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="461" y="180"/>
+		</protocol>
+		<protocol name="report positions and time">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="587" y="198"/>
+		</protocol>
+		<protocol name="drive around track">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="209" y="155"/>
+		</protocol>
+		<protocol name="stop at finish line">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="732" y="212"/>
+		</protocol>
+	</Actor>
+	<Actor id="7c50f899-5a1e-46f1-98ad-3ea687893228" name="Judge" x="322" y="502" width="-1" height="-1">
+		<protocol name="check for pentalities">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="367" y="393"/>
+			<bendpoint x="354" y="323"/>
+		</protocol>
+		<protocol name="starts race">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="182" y="305"/>
+		</protocol>
+		<protocol name="check standings at race end">
+			<child>9cd3d24d-e7ca-432e-aa04-22b215286a8f</child>
+			<bendpoint x="540" y="326"/>
+		</protocol>
+	</Actor>
+</OrgDiagram>
