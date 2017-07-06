@@ -2,21 +2,38 @@ package agents;
 
 import java.awt.Point;
 
-public class Car {
+import jade.core.Agent;
+
+@SuppressWarnings("serial")
+public class Car extends Agent{
 
 	private int number;
-	private String name;
 	private Point pos = new Point(0, 0);
 	private int spd = 2;
 	private int mode;
 	private int time = 0;
 	private int bestLap = 0;
 	
-	public Car(int number, String name, int x,int y){
-		this.number = number;
-		this.name = name;
-		mode = 1;
-		pos.setLocation(x, y);
+	@Override
+	protected void setup(){
+		System.out.printf("Started car %s\n",getAID().getName());
+		
+		Object[] args = getArguments();
+		if(args.length == 2){
+			pos.setLocation(Integer.parseInt((String) args[0]), Integer.parseInt((String) args[1]));
+		}else if(args.length == 3){
+			pos.setLocation(Integer.parseInt((String) args[0]), Integer.parseInt((String) args[1]));
+			spd = Integer.parseInt((String) args[2]);
+		}else{
+			System.out.print("Missing arguments!\n");
+			takeDown();
+		}
+		
+	}
+	
+	@Override
+	protected void takeDown(){
+		System.out.printf("Taking down car %s\n", getAID().getName());
 	}
 	
 	public void penalty(){
@@ -25,10 +42,6 @@ public class Car {
 	
 	public int getNumber(){
 		return number;
-	}
-	
-	public String getName(){
-		return name;
 	}
 	
 	public int getTime(){

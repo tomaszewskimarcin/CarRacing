@@ -1,4 +1,4 @@
-package main;
+package agents;
 
 public class Track {
 
