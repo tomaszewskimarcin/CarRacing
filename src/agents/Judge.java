@@ -1,66 +1,141 @@
 package agents;
 
-import javax.swing.JOptionPane;
+import java.awt.Point;
 
-public class Judge {
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.lang.acl.ACLMessage;
+
+@SuppressWarnings("serial")
+public class Judge extends Agent{
 	
-	private Car[] cars;
-	private Car penaltyCar;
-	private boolean penalty = true;
-	private int penaltyTime = 5;
-	private boolean race = false;
+	private boolean hasSP = false;
+	private boolean started = false;
+	private int ended = 0;
+	private AID[] cars = {new AID("c1",AID.ISLOCALNAME),
+			new AID("c2",AID.ISLOCALNAME),
+			new AID("c3",AID.ISLOCALNAME),
+			new AID("c4",AID.ISLOCALNAME)};
+	private AID track = new AID("track", AID.ISLOCALNAME);
+	private Point[] positions;
 	
-	
-	public Judge(){
-		checkForCars();
-		checkForPenaltys();
-	}
-	
-	private void checkForCars(){
+	@Override
+	protected void setup(){
+		System.out.println("Starting judge agent");
 		
+		initializePositions();
 	}
 	
-	private void checkForPenaltys(){
-		while(race){
-			if(penalty){
-				penaltyCar = cars[cars.length];
-				forcePenalty(penaltyCar, penaltyTime);
-			}
-		}
+	@Override
+	protected void takeDown(){
+		System.out.println("Taking down judge agent");
 	}
 	
-	private void forcePenalty(Car c, int time){
-		
-	}
-	
-	public void listStandings(){
-		String text = "";
-		Car[] standings = new Car[cars.length];
-		int i = 0;
-		for( Car c : cars){
-			standings[i] = c;
-		}
-		Car tmp;
-		for(int j = 0; j<standings.length; j++){
-			for( int x = 1; x<standings.length-1;x++){
-				Car c1 = standings[x];
-				Car c2 = standings[x-1];
-				if(c2.getTime() > c1.getTime()){
-					tmp = c2;
-					standings[x - 1] = standings[x];
-					standings[x] = tmp;
+	private void initializePositions(){
+		addBehaviour(new TickerBehaviour(this, 100) {
+			
+			@Override
+			protected void onTick() {
+				
+				ACLMessage msg = myAgent.receive();
+				if(msg!=null){
+					if(msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology()=="start-pos"){
+						positions = new Point[cars.length];
+						String raw = msg.getContent();
+						String[] rawTab = raw.split(";");
+						String[] curPos;
+						String curX;
+						String curY;
+						for(int i = 0; i<cars.length;i++){
+							curPos = rawTab[i].split(",");
+							curX = curPos[0];
+							curY = curPos[1];
+							positions[i] = new Point(Integer.parseInt(curX), Integer.parseInt(curY));
+						}
+						hasSP = true;
+					}
+				}else{
+					block();
+				}
+				
+				if(hasSP){
+					checkForStart();
+					stop();
 				}
 			}
-		}
-		i = 0;
-		for( Car cr : standings){
-			if(i == 0){
-				text += "place	name(number)	time	bestLap";
-			}else{
-				text += "\n"+i+".	"+cr.getName()+"("+cr.getNumber()+")	"+cr.getTime()+"	"+cr.getBestLap();
+		});
+	}
+	
+	private void checkForStart(){
+		addBehaviour(new TickerBehaviour(this, 100) {
+			
+			@Override
+			protected void onTick() {
+				
+				ACLMessage msg = myAgent.receive();
+				if(msg!=null){
+					if(msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology()=="nolaps"){
+						doDelete();
+					}else if(msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology()=="laps"){
+						started = true;
+					}
+				}else{
+					block();
+				}
+				
+				if(started){
+					System.out.println("Judge agent recived start command.");
+					doTheRace();
+					stop();
+				}
 			}
-		}
-		JOptionPane.showMessageDialog(null, text);
+		});
 	}
 
+	private void doTheRace(){
+		addBehaviour(new CyclicBehaviour() {
+			
+			ACLMessage msg;
+			ACLMessage response;
+			
+			@Override
+			public void action() {
+				
+				msg = myAgent.receive();
+				
+				if(msg!=null){
+					if(msg.getOntology()=="cur-pos"){
+						//check if penalty need to be assigned
+					}else if(msg.getOntology()=="ended"){
+						//count cars that ended race
+						ended++;
+					}
+				}
+				
+				if(ended==4){
+					//all cars ended
+					response = new ACLMessage(ACLMessage.INFORM);
+					for(int i = 0; i<cars.length;i++){
+						response.addReceiver(cars[i]);
+					}
+					response.addReceiver(track);
+					response.setOntology("race-end");
+					response.setContent("");
+					send(response);
+					started = false;
+				}
+				
+				if(!started){
+					standings();
+				}
+			}
+		});
+	}
+	
+	private void standings(){
+		
+	}
+	
 }
