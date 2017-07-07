@@ -30,7 +30,7 @@ public class Judge {
 	}
 	
 	private void forcePenalty(Car c, int time){
-		c.penalty();
+		
 	}
 	
 	public void listStandings(){

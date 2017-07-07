@@ -3,7 +3,10 @@ package agents;
 import java.awt.Point;
 
 import guis.CarGui;
+import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 
 @SuppressWarnings("serial")
 public class Car extends Agent{
@@ -11,22 +14,27 @@ public class Car extends Agent{
 	private int number;
 	private Point pos = new Point(0, 0);
 	private int spd = 2;
-	private int mode;
+	private int pace = 0;
 	private int time = 0;
 	private int bestLap = 0;
 	private boolean hasSP = false;
 	private boolean started = false;
+	private AID track = new AID("track", AID.ISLOCALNAME);
+	private AID judge = new AID("judge", AID.ISLOCALNAME);
 	
 	@Override
 	protected void setup(){
 		System.out.printf("Started car %s\n",getAID().getName());
-		
+
+		System.out.printf("Car agent %s getting start position.", getAID().getName());
 		while(!hasSP){
 			getStartPosition();
 		}
+		System.out.printf("Car agent %s waiting for start.", getAID().getName());
 		while(!started){
 			checkIfStarted();
 		}
+		System.out.printf("Car agent %s recived start command.", getAID().getName());
 		doTheRace();
 		
 	}
@@ -37,19 +45,39 @@ public class Car extends Agent{
 	}
 	
 	private void getStartPosition(){
-		hasSP = true;
+		addBehaviour(new OneShotBehaviour() {
+			
+			@Override
+			public void action() {
+				
+			}
+		});
 	}
 	
 	private void checkIfStarted(){
-		started = true;
+		addBehaviour(new OneShotBehaviour() {
+			
+			@Override
+			public void action() {
+				
+			}
+		});
 	}
 	
 	private void doTheRace(){
 		CarGui gui = new CarGui(this);
 		gui.showGui();
+		addBehaviour(new CyclicBehaviour() {
+			
+			@Override
+			public void action() {
+				sendData();
+				doDelete();
+			}
+		});
 	};
 	
-	public void penalty(){
+	private void sendData(){
 		
 	}
 	
@@ -65,30 +93,15 @@ public class Car extends Agent{
 		return bestLap;
 	}
 	
-	public void setMode(int mode){
-		if(mode>=1 && mode <=3){
-			this.mode = mode;
+	public void setPace(int pace){
+		if(pace>=0 && pace <=2){
+			this.pace = pace;
+			System.out.println(pace);
 		}
 	}
 	
-	public int getMode(){
-		return mode;
-	}
-	
-	public void setSpd(int spd){
-		this.spd = spd;
-	}
-	
-	public int getSpd(){
-		return spd;
-	}
-	
-	public void setPos(int x, int y){
-		pos.setLocation(x, y);
-	}
-	
-	public Point getPos(){
-		return pos;
+	public int getPace(){
+		return pace;
 	}
 	
 }
