@@ -1,6 +1,11 @@
 package agents;
 
+import java.awt.Point;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
@@ -19,6 +24,9 @@ public class Track extends Agent{
 	private int startX = 0;
 	private int startYmin = 0;
 	private int startYmax = 8;
+	private int tileSize = 60;
+	private Point[] carsPositions = new Point[4];
+	private char[][] trackASCII = new char[15][30];
 	private TrackSetupGui tsg = new TrackSetupGui(this);
 	private AID[] cars = {new AID("c1",AID.ISLOCALNAME),
 			new AID("c2",AID.ISLOCALNAME),
@@ -30,6 +38,8 @@ public class Track extends Agent{
 		System.out.println("Starting track agent.");
 		
 		System.out.println("Track is sending start positions.");
+		
+		loadTrack("/home/marcin/Dokumenty/test.txt");
 		sendStartPositions();
 	}
 	
@@ -40,7 +50,7 @@ public class Track extends Agent{
 	private void sendStartPositions(){
 		addBehaviour(new OneShotBehaviour() {
 			
-			int startYstep = (startYmax-startYmin)/4;
+			int startYstep = (startYmax-startYmin)/5;
 			String all = "";
 			ACLMessage msg;
 			
@@ -50,7 +60,8 @@ public class Track extends Agent{
 					msg = new ACLMessage(ACLMessage.INFORM);
 					msg.addReceiver(cars[i]);
 					msg.setOntology("start-pos");
-					int startY = (int) Math.floor(startYstep*i);
+					int startY = startYmin + (int) Math.floor(startYstep*(i + 1));
+					carsPositions[i] = new Point(startX, startY);
 					msg.setContent(startX+","+startY);
 					if(i<cars.length-1){
 						all += startX+","+startY+";";
@@ -164,6 +175,38 @@ public class Track extends Agent{
 				}
 			}
 		});
+	}
+	
+	private void loadTrack(String path){
+		
+		String line;
+		
+		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
+		    for(int i = 0; i<15; i++) {
+		    	line = br.readLine();
+		    	for(int j = 0; j<30; j++){
+		    		if(line.charAt(j)=='S'){
+		    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
+		    			startYmin = i * tileSize;
+		    			startYmax = (i + 1) * tileSize;
+		    		}
+		    		trackASCII[i][j] = line.charAt(j);
+		    	}
+		    }
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void showPositions(){
+		for(int i = 0; i<4; i++){
+			System.out.println("Pozycja samochodu "+(i+1)+" - x:"+carsPositions[i].getX()+" y:"+carsPositions[i].getY());
+		}
 	}
 	
 }

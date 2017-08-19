@@ -61,6 +61,7 @@ public class TrackSetupGui extends JFrame{
 	
 	public void showGui() {
 		pack();
+		t.showPositions();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int centerX = (int)screenSize.getWidth() / 2;
 		int centerY = (int)screenSize.getHeight() / 2;
