@@ -25,6 +25,9 @@ public class Car extends Agent{
 	private int curLap = 1;
 	private int laps = 0;
 	private int bestLap = 0;
+	private int dirX = 0;
+	private int dirY = 0;
+	private int tileSize = 0;
 	private boolean hasSP = false;
 	private boolean started = false;
 	private AID track = new AID("track", AID.ISLOCALNAME);
@@ -68,6 +71,13 @@ public class Car extends Agent{
 						String posS = msg.getContent();
 						String[] posT = posS.split(",");
 						pos.setLocation(Integer.parseInt(posT[0]), Integer.parseInt(posT[1]));
+						dirX = Integer.parseInt(posT[2]);
+						dirY = Integer.parseInt(posT[3]);
+						tileSize = Integer.parseInt(posT[4]);
+						
+						//Test communication
+						System.out.println("|"+pos.x+"|"+pos.y+"|"+dirX+"|"+dirY+"|"+tileSize);
+						
 						hasSP = true;
 					}
 				}else{

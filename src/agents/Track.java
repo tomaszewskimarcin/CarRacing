@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
+import guis.TrackGui;
 import guis.TrackSetupGui;
 import jade.core.AID;
 import jade.core.Agent;
@@ -25,9 +26,14 @@ public class Track extends Agent{
 	private int startYmin = 0;
 	private int startYmax = 8;
 	private int tileSize = 60;
+	private int startDirX = 0;
+	private int startDirY = 0;
+	private boolean startline = false;
+	private boolean errLoad = false;
 	private Point[] carsPositions = new Point[4];
-	private char[][] trackASCII = new char[15][30];
+	private char[][] trackASCII = new char[10][20];
 	private TrackSetupGui tsg = new TrackSetupGui(this);
+	private TrackGui tg;
 	private AID[] cars = {new AID("c1",AID.ISLOCALNAME),
 			new AID("c2",AID.ISLOCALNAME),
 			new AID("c3",AID.ISLOCALNAME),
@@ -37,10 +43,20 @@ public class Track extends Agent{
 	protected void setup(){
 		System.out.println("Starting track agent.");
 		
-		System.out.println("Track is sending start positions.");
-		
 		loadTrack("/home/marcin/Dokumenty/test.txt");
-		sendStartPositions();
+		
+		if(!errLoad){
+			
+			System.out.println("Starting track GUI");
+			
+			tg = new TrackGui(trackASCII,carsPositions, tileSize);
+			tg.showGui();
+			
+			System.out.println("Track is sending start positions.");
+			
+			sendStartPositions();
+			
+		}
 	}
 	
 	protected void takeDown(){
@@ -62,7 +78,7 @@ public class Track extends Agent{
 					msg.setOntology("start-pos");
 					int startY = startYmin + (int) Math.floor(startYstep*(i + 1));
 					carsPositions[i] = new Point(startX, startY);
-					msg.setContent(startX+","+startY);
+					msg.setContent(startX+","+startY+","+startDirX+","+startDirY+","+tileSize);
 					if(i<cars.length-1){
 						all += startX+","+startY+";";
 					}else{
@@ -182,13 +198,42 @@ public class Track extends Agent{
 		String line;
 		
 		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
-		    for(int i = 0; i<15; i++) {
+		    for(int i = 0; i<10; i++) {
 		    	line = br.readLine();
-		    	for(int j = 0; j<30; j++){
-		    		if(line.charAt(j)=='S'){
-		    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
-		    			startYmin = i * tileSize;
-		    			startYmax = (i + 1) * tileSize;
+		    	for(int j = 0; j<20; j++){
+		    		if(!startline){
+			    		if(line.charAt(j)=='D'){
+			    			startline = true;
+			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
+			    			startYmin = 10 * tileSize - i * tileSize;
+			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startDirX = 0;
+			    			startDirY = -1;
+			    		}else if(line.charAt(j)=='U'){
+			    			startline = true;
+			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
+			    			startYmin = 10 * tileSize - i * tileSize;
+			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startDirX = 0;
+			    			startDirY = 1;
+			    		}else if(line.charAt(j)=='L'){
+			    			startline = true;
+			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
+			    			startYmin = 10 * tileSize - i * tileSize;
+			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startDirX = -1;
+			    			startDirY = 0;
+			    		}else if(line.charAt(j)=='U'){
+			    			startline = true;
+			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
+			    			startYmin = 10 * tileSize - i * tileSize;
+			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startDirX = 1;
+			    			startDirY = 0;
+			    		}
+		    		}else if(started && (line.charAt(j) == 'D' || line.charAt(j) == 'U' || line.charAt(j) == 'L' || line.charAt(j) == 'R')){
+		    			System.out.println("Error loading track on line "+i+" position "+j+". Double start character.");
+		    			errLoad = true;
 		    		}
 		    		trackASCII[i][j] = line.charAt(j);
 		    	}
