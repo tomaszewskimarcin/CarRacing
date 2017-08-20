@@ -25,8 +25,8 @@ public class Car extends Agent{
 	private int curLap = 1;
 	private int laps = 0;
 	private int bestLap = 0;
-	private int dirX = 0;
-	private int dirY = 0;
+	private double dirX = 0;
+	private double dirY = 0;
 	private int tileSize = 0;
 	private boolean hasSP = false;
 	private boolean started = false;
@@ -76,7 +76,7 @@ public class Car extends Agent{
 						tileSize = Integer.parseInt(posT[4]);
 						
 						//Test communication
-						System.out.println("|"+pos.x+"|"+pos.y+"|"+dirX+"|"+dirY+"|"+tileSize);
+						//System.out.println("|"+pos.x+"|"+pos.y+"|"+dirX+"|"+dirY+"|"+tileSize);
 						
 						hasSP = true;
 					}

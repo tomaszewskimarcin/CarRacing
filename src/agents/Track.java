@@ -23,8 +23,7 @@ public class Track extends Agent{
 	private boolean started = false;
 	private int laps = 0;
 	private int startX = 0;
-	private int startYmin = 0;
-	private int startYmax = 8;
+	private int startY = 0;
 	private int tileSize = 60;
 	private int startDirX = 0;
 	private int startDirY = 0;
@@ -43,14 +42,9 @@ public class Track extends Agent{
 	protected void setup(){
 		System.out.println("Starting track agent.");
 		
-		loadTrack("/home/marcin/Dokumenty/test.txt");
+		loadTrack("test.txt");
 		
 		if(!errLoad){
-			
-			System.out.println("Starting track GUI");
-			
-			tg = new TrackGui(trackASCII,carsPositions, tileSize);
-			tg.showGui();
 			
 			System.out.println("Track is sending start positions.");
 			
@@ -66,7 +60,6 @@ public class Track extends Agent{
 	private void sendStartPositions(){
 		addBehaviour(new OneShotBehaviour() {
 			
-			int startYstep = (startYmax-startYmin)/5;
 			String all = "";
 			ACLMessage msg;
 			
@@ -76,9 +69,19 @@ public class Track extends Agent{
 					msg = new ACLMessage(ACLMessage.INFORM);
 					msg.addReceiver(cars[i]);
 					msg.setOntology("start-pos");
-					int startY = startYmin + (int) Math.floor(startYstep*(i + 1));
-					carsPositions[i] = new Point(startX, startY);
-					msg.setContent(startX+","+startY+","+startDirX+","+startDirY+","+tileSize);
+					if(startDirY == 0 && startDirX != 0){
+						int marigin = (tileSize-40)/5;
+						int startYstep = ((i+1)*marigin)+(i*10);
+						int startYtmp = startY + startYstep;
+						msg.setContent((startX+(int)Math.floor(tileSize/2)-5)+","+startYtmp+","+startDirX+","+startDirY+","+tileSize);
+						carsPositions[i] = new Point((startX+(int)Math.floor(tileSize/2) - 5),startYtmp);
+					}else if(startDirY != 0 && startDirX == 0){
+						int marigin = (tileSize-40)/5;
+						int startXstep = ((i+1)*marigin)+(i*10);
+						int startXtmp = startX + startXstep;
+						msg.setContent(startXtmp+","+(startY + (int)Math.floor(tileSize/2)-5)+","+startDirX+","+startDirY+","+tileSize);
+						carsPositions[i] = new Point(startXtmp,(startY + (int)Math.floor(tileSize/2)-5));
+					}
 					if(i<cars.length-1){
 						all += startX+","+startY+";";
 					}else{
@@ -92,6 +95,11 @@ public class Track extends Agent{
 				msg.setContent(all);
 				send(msg);
 				tsg.showGui();
+				
+				System.out.println("Starting track GUI");
+				
+				tg = new TrackGui(trackASCII,carsPositions, tileSize);
+				tg.showGui();
 			}
 			
 		});
@@ -204,30 +212,26 @@ public class Track extends Agent{
 		    		if(!startline){
 			    		if(line.charAt(j)=='D'){
 			    			startline = true;
-			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
-			    			startYmin = 10 * tileSize - i * tileSize;
-			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startX = (j * tileSize);
+			    			startY = i * tileSize;
 			    			startDirX = 0;
 			    			startDirY = -1;
 			    		}else if(line.charAt(j)=='U'){
 			    			startline = true;
-			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
-			    			startYmin = 10 * tileSize - i * tileSize;
-			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startX = (j * tileSize);
+			    			startY = i * tileSize;
 			    			startDirX = 0;
 			    			startDirY = 1;
 			    		}else if(line.charAt(j)=='L'){
 			    			startline = true;
-			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
-			    			startYmin = 10 * tileSize - i * tileSize;
-			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startX = (j * tileSize);
+			    			startY = i * tileSize;
 			    			startDirX = -1;
 			    			startDirY = 0;
 			    		}else if(line.charAt(j)=='U'){
 			    			startline = true;
-			    			startX = (j * tileSize) + (int)Math.floor(tileSize/2);
-			    			startYmin = 10 * tileSize - i * tileSize;
-			    			startYmax = 10 * tileSize -(i - 1) * tileSize;
+			    			startX = (j * tileSize);
+			    			startY = 10 * tileSize - i * tileSize;
 			    			startDirX = 1;
 			    			startDirY = 0;
 			    		}
