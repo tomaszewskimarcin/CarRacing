@@ -68,13 +68,19 @@ public class TrackComponent extends JComponent {
 		
 		for(int i = 0; i<10; i++){
 			for(int j = 0; j<20; j++){
-				if(trackASCII[i][j] == '#'){
+				if(trackASCII[i][j] == '#' || trackASCII[i][j] == '!'){
+					if(trackASCII[i][j] == '!'){
+						gr.setPaint(Color.red);
+					}else{
+						gr.setPaint(trackColor);
+					}
 					tmpX = j*tileSize;
 					tmpY = i*tileSize;
 					s = new Rectangle(tmpX, tmpY, tileSize, tileSize);
 					gr.draw(s);
 					gr.fill(s);
 				}else if(trackASCII[i][j] == 'D' || trackASCII[i][j] == 'U' || trackASCII[i][j] == 'R' || trackASCII[i][j] == 'L'){
+					gr.setPaint(trackColor);
 					tmpXstart = j*tileSize;
 					tmpYstart = i*tileSize;
 					for(int a = 0; a<4; a++){

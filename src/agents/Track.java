@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import guis.TrackGui;
@@ -29,6 +30,7 @@ public class Track extends Agent{
 	private int startDirY = 0;
 	private boolean startline = false;
 	private boolean errLoad = false;
+	private boolean errValidate = false;
 	private Point[] carsPositions = new Point[4];
 	private char[][] trackASCII = new char[10][20];
 	private TrackSetupGui tsg = new TrackSetupGui(this);
@@ -94,12 +96,20 @@ public class Track extends Agent{
 				msg.setOntology("start-pos");
 				msg.setContent(all);
 				send(msg);
-				tsg.showGui();
+				
+				validateTrack();
 				
 				System.out.println("Starting track GUI");
 				
 				tg = new TrackGui(trackASCII,carsPositions, tileSize);
 				tg.showGui();
+				
+				if(!errValidate){
+					tsg.showGui();
+				}else{
+					JOptionPane.showMessageDialog(tg, "Error marked red.","Validation Error",JOptionPane.ERROR_MESSAGE);
+				}
+				
 			}
 			
 		});
@@ -250,6 +260,64 @@ public class Track extends Agent{
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private void validateTrack(){
+		for(int i = 0; i<10 ; i++){
+			for(int j = 0; j<20 ; j++){
+				if(trackASCII[i][j] == '#' 
+						|| trackASCII[i][j] == 'D' 
+						|| trackASCII[i][j] == 'U' 
+						|| trackASCII[i][j] == 'L' 
+						|| trackASCII[i][j] == 'R' ){
+					int counter = 0;
+					if(i-1>=0){
+						if(trackASCII[i-1][j] == '#' 
+								|| trackASCII[i-1][j] == 'D' 
+								|| trackASCII[i-1][j] == 'U' 
+								|| trackASCII[i-1][j] == 'L' 
+								|| trackASCII[i-1][j] == 'R'  
+								|| trackASCII[i-1][j] == '!'){
+							counter++;
+						}
+					}
+					if(i+1<10){
+						if(trackASCII[i+1][j] == '#' 
+								|| trackASCII[i+1][j] == 'D' 
+								|| trackASCII[i+1][j] == 'U' 
+								|| trackASCII[i+1][j] == 'L' 
+								|| trackASCII[i+1][j] == 'R' 
+								|| trackASCII[i+1][j] == '!'){
+							counter++;
+						}
+					}
+					if(j+1<20){
+						if(trackASCII[i][j+1] == '#' 
+								|| trackASCII[i][j+1] == 'D' 
+								|| trackASCII[i][j+1] == 'U' 
+								|| trackASCII[i][j+1] == 'L' 
+								|| trackASCII[i][j+1] == 'R' 
+								|| trackASCII[i][j+1] == '!'){
+							counter++;
+						}
+					}
+					if(j-1>=0){
+						if(trackASCII[i][j-1] == '#' 
+								|| trackASCII[i][j-1] == 'D' 
+								|| trackASCII[i][j-1] == 'U' 
+								|| trackASCII[i][j-1] == 'L' 
+								|| trackASCII[i][j-1] == 'R'
+								|| trackASCII[i][j-1] == '!'){
+							counter++;
+						}
+					}
+					if(counter!=2){
+						trackASCII[i][j] = '!';
+						errValidate = true;
+					}
+				}
+			}
+		}
 	}
 	
 	public void showPositions(){
