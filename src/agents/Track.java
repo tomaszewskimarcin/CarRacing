@@ -42,7 +42,7 @@ public class Track extends Agent{
 	protected void setup(){
 		System.out.println("Starting track agent.");
 		
-		loadTrack("test.txt");
+		loadTrack("track.txt");
 		
 		if(!errLoad){
 			
