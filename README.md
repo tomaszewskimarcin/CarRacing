@@ -2,7 +2,7 @@
 
 Simple Car Racing with agents using Java and Jade
 
-##Changing Track
+## Changing Track
 
 Track can be changed in track.txt file. Tere are few simple rules:
 - track must be 20x10
