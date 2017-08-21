@@ -106,6 +106,7 @@ public class Track extends Agent{
 				
 				if(!errValidate){
 					tsg.showGui();
+					System.out.println(checkPosition(0,0));
 				}else{
 					JOptionPane.showMessageDialog(tg, "Error marked red.","Validation Error",JOptionPane.ERROR_MESSAGE);
 				}
@@ -320,10 +321,36 @@ public class Track extends Agent{
 		}
 	}
 	
+	private boolean checkPosition(int x, int y){
+		boolean check = false;
+		
+		if(x>=0 && y>=0){
+			int shortenX = (int) Math.floor(x/tileSize);
+			int shortenY = (int) Math.floor(y/tileSize);
+			
+			if(shortenX >= 0 && shortenX <20){
+				if(shortenY >= 0 && shortenY < 10){
+					char c = trackASCII[shortenY][shortenX];
+					
+					if(c == '#' ||
+							c == 'D' ||
+							c == 'U' ||
+							c == 'L' ||
+							c == 'R'){
+						check = true;
+					}
+				}
+			}
+		}
+		
+		return check;
+	}
+	
 	public void showPositions(){
 		for(int i = 0; i<4; i++){
 			System.out.println("Pozycja samochodu "+(i+1)+" - x:"+carsPositions[i].getX()+" y:"+carsPositions[i].getY());
 		}
 	}
+	
 	
 }
