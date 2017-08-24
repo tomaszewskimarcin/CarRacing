@@ -106,7 +106,6 @@ public class Track extends Agent{
 				
 				if(!errValidate){
 					tsg.showGui();
-					System.out.println(checkPosition(0,0));
 				}else{
 					JOptionPane.showMessageDialog(tg, "Error marked red.","Validation Error",JOptionPane.ERROR_MESSAGE);
 				}
@@ -187,10 +186,14 @@ public class Track extends Agent{
 						started = false;
 					}else if(msg.getOntology()=="cur-pos"){
 						//update cars positions on visualisation
-						
+						int i = Integer.parseInt(msg.getSender().getLocalName().substring(msg.getSender().getLocalName().indexOf('c')+1));
+						String[] newPos = msg.getContent().split(",");
+						carsPositions[i-1] = new Point(Integer.parseInt(newPos[0]),Integer.parseInt(newPos[1]));
+						tg.updatePos(carsPositions);
 					}else if(msg.getOntology()=="is-clear"){
 						//check track for car
-						
+						String[] pos = msg.getContent().split(",");
+						clear = checkPosition(Integer.parseInt(pos[0]), Integer.parseInt(pos[1]));
 						response = new ACLMessage(ACLMessage.INFORM);
 						response.addReceiver(msg.getSender());
 						response.setOntology("is-clear-response");

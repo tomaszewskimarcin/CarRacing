@@ -28,6 +28,8 @@ public class Car extends Agent{
 	private double dirX = 0;
 	private double dirY = 0;
 	private int tileSize = 0;
+	private int newX = 0;
+	private int newY = 0;
 	private boolean hasSP = false;
 	private boolean started = false;
 	private AID track = new AID("track", AID.ISLOCALNAME);
@@ -44,7 +46,6 @@ public class Car extends Agent{
 		
 	}
 	
-	
 	@Override
 	protected void takeDown(){
 		SwingUtilities.invokeLater(new Runnable() {
@@ -57,7 +58,6 @@ public class Car extends Agent{
 		});
 		System.out.printf("Taking down car %s\n", getAID().getLocalName());
 	}
-	
 	
 	private void getStartPosition(){
 		addBehaviour(new TickerBehaviour(this, 100) {
@@ -93,7 +93,6 @@ public class Car extends Agent{
 		});
 	}
 	
-	
 	private void checkIfStarted(){
 		addBehaviour(new TickerBehaviour(this, 100) {
 			
@@ -121,7 +120,6 @@ public class Car extends Agent{
 		});
 	}
 	
-	
 	private void doTheRace(){
 		gui.showGui();
 		curSpd = spd;
@@ -132,7 +130,6 @@ public class Car extends Agent{
 			
 			@Override
 			public void action() {
-			
 				switch(stage){
 				case 0:
 					//send ask to track for further track and change position
@@ -141,10 +138,11 @@ public class Car extends Agent{
 						if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology()=="is-clear-response"){
 							if(msg.getContent().equals("clear")){
 								//action if clear
-								
+								pos.x = pos.x+(int)Math.floor(spd*dirX);
+								pos.y = pos.y+(int)Math.floor(spd*dirY);
 							}else if(msg.getContent().equals("notclear")){
 								//action if not clear
-								
+								//System.out.println("Not clear");
 							}
 							sended = false;
 							stage++;
@@ -153,7 +151,9 @@ public class Car extends Agent{
 						msg = new ACLMessage(ACLMessage.INFORM);
 						msg.addReceiver(track);
 						msg.setOntology("is-clear");
-						msg.setContent("");
+						newX = pos.x+(int)Math.floor((tileSize*0.9)*dirX);
+						newY = pos.y+(int)Math.floor((tileSize*0.9)*dirY);
+						msg.setContent(newX+","+newY);
 						send(msg);
 						sended = true;
 					}
@@ -210,7 +210,6 @@ public class Car extends Agent{
 		});
 	}
 	
-	
 	private void sendData(){
 		addBehaviour(new OneShotBehaviour() {
 			
@@ -231,13 +230,11 @@ public class Car extends Agent{
 		return number;
 	}
 
-	
 	public void setPace(int pace){
 		if(pace>=0 && pace <=2){
 			this.pace = pace;
 		}
 	}
-	
 	
 	public int getPace(){
 		return pace;
