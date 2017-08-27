@@ -72,6 +72,7 @@ public class Track extends Agent{
 					msg.addReceiver(cars[i]);
 					msg.setOntology("start-pos");
 					if(startDirY == 0 && startDirX != 0){
+						System.out.println("Dup");
 						int marigin = (tileSize-40)/5;
 						int startYstep = ((i+1)*marigin)+(i*10);
 						int startYtmp = startY + startYstep;
@@ -229,23 +230,23 @@ public class Track extends Agent{
 			    			startX = (j * tileSize);
 			    			startY = i * tileSize;
 			    			startDirX = 0;
-			    			startDirY = -1;
+			    			startDirY = 1;
 			    		}else if(line.charAt(j)=='U'){
 			    			startline = true;
 			    			startX = (j * tileSize);
 			    			startY = i * tileSize;
 			    			startDirX = 0;
-			    			startDirY = 1;
+			    			startDirY = -1;
 			    		}else if(line.charAt(j)=='L'){
 			    			startline = true;
 			    			startX = (j * tileSize);
 			    			startY = i * tileSize;
 			    			startDirX = -1;
 			    			startDirY = 0;
-			    		}else if(line.charAt(j)=='U'){
+			    		}else if(line.charAt(j)=='R'){
 			    			startline = true;
 			    			startX = (j * tileSize);
-			    			startY = 10 * tileSize - i * tileSize;
+			    			startY = i * tileSize;
 			    			startDirX = 1;
 			    			startDirY = 0;
 			    		}
