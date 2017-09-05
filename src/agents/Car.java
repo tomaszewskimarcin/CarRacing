@@ -279,7 +279,6 @@ public class Car extends Agent{
 		});
 	}
 	
-	
 	private void updateDir(){
 		if(targetDirX > dirX){
 			if(dirX + force > targetDirX){
@@ -314,7 +313,6 @@ public class Car extends Agent{
 		}
 	}
 	
-	
 	private void setTargetDir(){
 		if(dirX == 0 && dirY == 1){
 			targetDirXL = -1;
@@ -343,13 +341,11 @@ public class Car extends Agent{
 		return number;
 	}
 	
-
 	public void setPace(int pace){
 		if(pace>=0 && pace <=2){
 			this.pace = pace;
 		}
 	}
-	
 	
 	public int getPace(){
 		return pace;

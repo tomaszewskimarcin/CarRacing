@@ -40,7 +40,8 @@ public class Track extends Agent{
 			new AID("c3",AID.ISLOCALNAME),
 			new AID("c4",AID.ISLOCALNAME)}; 
 	private AID judge = new AID("judge", AID.ISLOCALNAME);
-
+	private boolean[] startProtect = {true,true,true,true};
+	
 	protected void setup(){
 		System.out.println("Starting track agent.");
 		
@@ -182,14 +183,28 @@ public class Track extends Agent{
 				msg = myAgent.receive();
 				
 				if(msg!=null){
+					int i = Integer.parseInt(msg.getSender().getLocalName().substring(msg.getSender().getLocalName().indexOf('c')+1));
 					if(msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology()=="race-end"){
 						//destroy track
 						started = false;
 					}else if(msg.getOntology()=="cur-pos"){
 						//update cars positions on visualisation
-						int i = Integer.parseInt(msg.getSender().getLocalName().substring(msg.getSender().getLocalName().indexOf('c')+1));
 						String[] newPos = msg.getContent().split(",");
 						carsPositions[i-1] = new Point(Integer.parseInt(newPos[0]),Integer.parseInt(newPos[1]));
+						if(!startProtect[i-1]){
+							if(checkNewLap(Integer.parseInt(newPos[0]),Integer.parseInt(newPos[1]))){
+								startProtect[i-1] = true;
+								response = new ACLMessage(ACLMessage.INFORM);
+								response.addReceiver(msg.getSender());
+								response.setOntology("nextlap");
+								response.setContent("true");
+								send(response);
+							}
+						}else{
+							if(checkIfTrack(Integer.parseInt(newPos[0]),Integer.parseInt(newPos[1]))){
+								startProtect[i-1] = false;
+							}
+						}
 						tg.updatePos(carsPositions);
 					}else if(msg.getOntology()=="is-clear"){
 						//check track for car
@@ -336,7 +351,7 @@ public class Track extends Agent{
 				if(shortenY >= 0 && shortenY < 10){
 					char c = trackASCII[shortenY][shortenX];
 					
-					if(c == '#' ||
+					if( c == '#'  ||
 							c == 'D' ||
 							c == 'U' ||
 							c == 'L' ||
@@ -356,5 +371,47 @@ public class Track extends Agent{
 		}
 	}
 	
+	private boolean checkNewLap(int x, int y){
+		boolean check = false;
+		
+		if(x>=0 && y>=0){
+			int shortenX = (int) Math.floor(x/tileSize);
+			int shortenY = (int) Math.floor(y/tileSize);
+			
+			if(shortenX >= 0 && shortenX <20){
+				if(shortenY >= 0 && shortenY < 10){
+					char c = trackASCII[shortenY][shortenX];
+					
+					if(c == 'D' ||
+							c == 'U' ||
+							c == 'L' ||
+							c == 'R'){
+						check = true;
+					}
+				}
+			}
+		}
+		return check;
+	}
+
+	private boolean checkIfTrack(int x, int y){
+		boolean check = false;
+		
+		if(x>=0 && y>=0){
+			int shortenX = (int) Math.floor(x/tileSize);
+			int shortenY = (int) Math.floor(y/tileSize);
+			
+			if(shortenX >= 0 && shortenX <20){
+				if(shortenY >= 0 && shortenY < 10){
+					char c = trackASCII[shortenY][shortenX];
+					
+					if(c == '#'){
+						check = true;
+					}
+				}
+			}
+		}
+		return check;
+	}
 	
 }
