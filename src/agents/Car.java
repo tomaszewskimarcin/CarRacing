@@ -228,8 +228,10 @@ public class Car extends Agent{
 						curSpd = curSpd/2;
 					}else if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty-end"){
 						curSpd = spd;
-					}else if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology() == "nextlap"){
+					}
+					if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology() == "nextlap"){
 						curLap++;
+						System.out.println("Car "+getLocalName()+" lap "+curLap);
 					}
 					stage++;
 					break;
