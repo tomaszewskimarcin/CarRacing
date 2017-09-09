@@ -42,6 +42,7 @@ public class Car extends Agent{
 	private boolean checkChange = false;
 	private boolean checkLeft = false;
 	private boolean checkRight = false;
+	private boolean doCheckRight = false;
 	private double force = 0.01;
 	private AID track = new AID("track", AID.ISLOCALNAME);
 	private AID judge = new AID("judge", AID.ISLOCALNAME);
@@ -148,6 +149,10 @@ public class Car extends Agent{
 					//send ask to track for further track and change position
 					if(sended){
 						msg = myAgent.receive();
+						if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology() == "nextlap"){
+							curLap++;
+							System.out.println("Car "+getLocalName()+" lap "+curLap);
+						}
 						if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology()=="is-clear-response"){
 							if(msg.getContent().equals("clear")){
 								//action if clear
@@ -159,7 +164,8 @@ public class Car extends Agent{
 										targetDirY = targetDirYL;
 										checkLeft = false;
 										checkRight = false;
-									}else if(checkRight){
+									}
+									if(checkRight){
 										targetDirX = targetDirXR;
 										targetDirY = targetDirYR;
 										checkLeft = false;
@@ -177,6 +183,7 @@ public class Car extends Agent{
 								}
 								if(checkLeft){
 									checkLeft = false;
+									doCheckRight = true;
 								}
 								if(checkRight){
 									checkRight = false;
@@ -193,14 +200,15 @@ public class Car extends Agent{
 						msg.addReceiver(track);
 						msg.setOntology("is-clear");
 						if(!checkChange){
-							newX = pos.x+(int)Math.floor((tileSize*multiply*1.5)*dirX);
-							newY = pos.y+(int)Math.floor((tileSize*multiply*1.5)*dirY);
+							newX = pos.x+(int)Math.floor((tileSize*multiply)*dirX);
+							newY = pos.y+(int)Math.floor((tileSize*multiply)*dirY);
 						}else if(!checkLeft && !checkRight){
-							if(!checkLeft){
+							if(!doCheckRight && !checkLeft){
 								newX = pos.x+(int)Math.floor((tileSize*multiply)*targetDirXL);
 								newY = pos.y+(int)Math.floor((tileSize*multiply)*targetDirYL);
 								checkLeft = true;
-							}else if(!checkRight){
+							}else if(doCheckRight && !checkRight){
+								doCheckRight = false;
 								newX = pos.x+(int)Math.floor((tileSize*multiply)*targetDirXR);
 								newY = pos.y+(int)Math.floor((tileSize*multiply)*targetDirYR);
 								checkRight = true;
@@ -228,10 +236,6 @@ public class Car extends Agent{
 						curSpd = curSpd/2;
 					}else if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty-end"){
 						curSpd = spd;
-					}
-					if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology() == "nextlap"){
-						curLap++;
-						System.out.println("Car "+getLocalName()+" lap "+curLap);
 					}
 					stage++;
 					break;

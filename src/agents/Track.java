@@ -183,7 +183,10 @@ public class Track extends Agent{
 				msg = myAgent.receive();
 				
 				if(msg!=null){
-					int i = Integer.parseInt(msg.getSender().getLocalName().substring(msg.getSender().getLocalName().indexOf('c')+1));
+					int i = 0;
+					if(!msg.getSender().getLocalName().equals("judge")) {
+						i = Integer.parseInt(msg.getSender().getLocalName().substring(msg.getSender().getLocalName().indexOf('c')+1));
+					}
 					if(msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology()=="race-end"){
 						//destroy track
 						started = false;
