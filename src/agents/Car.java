@@ -204,13 +204,13 @@ public class Car extends Agent{
 							newY = pos.y+(int)Math.floor((tileSize*multiply)*dirY);
 						}else if(!checkLeft && !checkRight){
 							if(!doCheckRight && !checkLeft){
-								newX = pos.x+(int)Math.floor((tileSize*multiply)*targetDirXL);
-								newY = pos.y+(int)Math.floor((tileSize*multiply)*targetDirYL);
+								newX = pos.x+(int)Math.floor((tileSize*multiply*1.1)*targetDirXL);
+								newY = pos.y+(int)Math.floor((tileSize*multiply*1.1)*targetDirYL);
 								checkLeft = true;
 							}else if(doCheckRight && !checkRight){
 								doCheckRight = false;
-								newX = pos.x+(int)Math.floor((tileSize*multiply)*targetDirXR);
-								newY = pos.y+(int)Math.floor((tileSize*multiply)*targetDirYR);
+								newX = pos.x+(int)Math.floor((tileSize*multiply*1.1)*targetDirXR);
+								newY = pos.y+(int)Math.floor((tileSize*multiply*1.1)*targetDirYR);
 								checkRight = true;
 							}
 						}
