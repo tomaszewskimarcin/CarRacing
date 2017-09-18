@@ -46,13 +46,15 @@ public class Car extends Agent{
 	private double force = 0.01;
 	private AID track = new AID("track", AID.ISLOCALNAME);
 	private AID judge = new AID("judge", AID.ISLOCALNAME);
-	CarGui gui = new CarGui(this);
+	CarGui gui;
 	private int stage = 0; 
 	
 	@Override
 	protected void setup(){
 		System.out.printf("Started car %s\n",getAID().getLocalName());
-
+		
+		gui = new CarGui(this);
+		
 		System.out.printf("Car agent %s getting start position.\n", getAID().getLocalName());
 			getStartPosition();
 		
@@ -136,7 +138,6 @@ public class Car extends Agent{
 	
 	private void doTheRace(){
 		gui.showGui();
-		curSpd = spd;
 		addBehaviour(new CyclicBehaviour() {
 
 			ACLMessage msg;
@@ -144,20 +145,32 @@ public class Car extends Agent{
 			
 			@Override
 			public void action() {
+				if(pace == 0) {
+					curSpd = spd;
+				}else if(pace == 1) {
+					curSpd = spd+2;
+				}else if(pace == 2) {
+					curSpd = spd-2;
+				}
+				msg = myAgent.receive();
+				if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology() == "nextlap"){
+					curLap++;
+					System.out.println("Car "+getLocalName()+" lap "+curLap);
+				}
+				if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty"){
+					curSpd = curSpd/2;
+				}else if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty-end"){
+					curSpd = spd;
+				}
 				switch(stage){
 				case 0:
 					//send ask to track for further track and change position
 					if(sended){
-						msg = myAgent.receive();
-						if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology() == "nextlap"){
-							curLap++;
-							System.out.println("Car "+getLocalName()+" lap "+curLap);
-						}
 						if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology()=="is-clear-response"){
 							if(msg.getContent().equals("clear")){
 								//action if clear
-								pos.x += (int)Math.floor(spd*dirX);
-								pos.y += (int)Math.floor(spd*dirY);
+								pos.x += (int)Math.floor(curSpd*dirX);
+								pos.y += (int)Math.floor(curSpd*dirY);
 								if(checkChange){
 									if(checkLeft){
 										targetDirX = targetDirXL;
@@ -175,8 +188,8 @@ public class Car extends Agent{
 							}else if(msg.getContent().equals("notclear")){
 								//action if not clear
 								//System.out.println("Not clear");
-								pos.x += (int)Math.floor(spd*dirX);
-								pos.y += (int)Math.floor(spd*dirY);
+								pos.x += (int)Math.floor(curSpd*dirX);
+								pos.y += (int)Math.floor(curSpd*dirY);
 								if(!checkChange){
 									setTargetDir();
 									checkChange = true;
@@ -230,16 +243,6 @@ public class Car extends Agent{
 					stage++;
 					break;
 				case 2:
-					//check for penalties||nextlap
-					msg = myAgent.receive();
-					if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty"){
-						curSpd = curSpd/2;
-					}else if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty-end"){
-						curSpd = spd;
-					}
-					stage++;
-					break;
-				case 3:
 					//check if ended and report if needed
 					if(curLap>laps){
 						msg = new ACLMessage(ACLMessage.INFORM);
@@ -252,9 +255,8 @@ public class Car extends Agent{
 						stage = 0;
 					}
 					break;
-				case 4:
+				case 3:
 					//wait for race end
-					msg = myAgent.receive();
 					if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "race-end"){
 						started = false;
 					}
@@ -286,6 +288,9 @@ public class Car extends Agent{
 	}
 	
 	private void updateDir(){
+		if(dirX == targetDirX && dirY == targetDirY && dirX == targetDirX && dirY == targetDirY){
+			checkChange = false;
+		}
 		if(targetDirX > dirX){
 			if(dirX + force > targetDirX){
 				dirX = targetDirX;
@@ -314,7 +319,7 @@ public class Car extends Agent{
 				dirY -= force;
 			}
 		}
-		if(dirX == targetDirX && dirY == targetDirY){
+		if(dirX == targetDirX && dirY == targetDirY && dirX == targetDirX && dirY == targetDirY){
 			checkChange = false;
 		}
 	}
@@ -326,8 +331,8 @@ public class Car extends Agent{
 			targetDirYL = 0;
 			targetDirYR = 0;
 		}else if(dirX == 0 && dirY == -1){
-			targetDirXL = 1;
-			targetDirXR = -1;
+			targetDirXL = -1;
+			targetDirXR = 1;
 			targetDirYL = 0;
 			targetDirYR = 0;
 		}else if(dirX == -1 && dirY == 0){
@@ -338,8 +343,8 @@ public class Car extends Agent{
 		}else if(dirX == 1 && dirY == 0){
 			targetDirXL = 0;
 			targetDirXR = 0;
-			targetDirYL = 1;
-			targetDirYR = -1;
+			targetDirYL = -1;
+			targetDirYR = 1;
 		}
 	}
 	

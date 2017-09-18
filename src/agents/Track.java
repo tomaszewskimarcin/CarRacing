@@ -33,7 +33,7 @@ public class Track extends Agent{
 	private boolean errValidate = false;
 	private Point[] carsPositions = new Point[4];
 	private char[][] trackASCII = new char[10][20];
-	private TrackSetupGui tsg = new TrackSetupGui(this);
+	private TrackSetupGui tsg;
 	private TrackGui tg;
 	private AID[] cars = {new AID("c1",AID.ISLOCALNAME),
 			new AID("c2",AID.ISLOCALNAME),
@@ -48,6 +48,8 @@ public class Track extends Agent{
 		loadTrack("track.txt");
 		
 		if(!errLoad){
+			
+			tsg = new TrackSetupGui(this);
 			
 			System.out.println("Track is sending start positions.");
 			
