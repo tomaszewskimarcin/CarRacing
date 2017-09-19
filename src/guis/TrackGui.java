@@ -43,5 +43,9 @@ public class TrackGui extends JFrame {
 	public void updatePos(Point[] updatedPositions){
 		tc.updatePos(updatedPositions);
 	}
+	
+	public void showHideCars() {
+		tc.showHideCars();
+	}
 
 }

@@ -31,6 +31,7 @@ public class Track extends Agent{
 	private boolean startline = false;
 	private boolean errLoad = false;
 	private boolean errValidate = false;
+	private int counter = 0;
 	private Point[] carsPositions = new Point[4];
 	private char[][] trackASCII = new char[10][20];
 	private TrackSetupGui tsg;
@@ -75,7 +76,6 @@ public class Track extends Agent{
 					msg.addReceiver(cars[i]);
 					msg.setOntology("start-pos");
 					if(startDirY == 0 && startDirX != 0){
-						System.out.println("Dup");
 						int marigin = (tileSize-40)/5;
 						int startYstep = ((i+1)*marigin)+(i*10);
 						int startYtmp = startY + startYstep;
@@ -102,6 +102,8 @@ public class Track extends Agent{
 				send(msg);
 				
 				validateTrack();
+				
+				sendOthersPos(msg);
 				
 				System.out.println("Starting track GUI");
 				
@@ -192,6 +194,7 @@ public class Track extends Agent{
 					if(msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology()=="race-end"){
 						//destroy track
 						started = false;
+						tg.showHideCars();
 					}else if(msg.getOntology()=="cur-pos"){
 						//update cars positions on visualisation
 						String[] newPos = msg.getContent().split(",");
@@ -211,6 +214,14 @@ public class Track extends Agent{
 							}
 						}
 						tg.updatePos(carsPositions);
+						
+						counter++;
+						
+						if(counter >= 4) {
+							counter = 0;
+							sendOthersPos(response);
+						}
+						
 					}else if(msg.getOntology()=="is-clear"){
 						//check track for car
 						String[] pos = msg.getContent().split(",");
@@ -417,6 +428,30 @@ public class Track extends Agent{
 			}
 		}
 		return check;
+	}
+	
+	private void sendOthersPos(ACLMessage msg) {
+
+		for(int i = 0;i<carsPositions.length;i++) {
+			msg = new ACLMessage(ACLMessage.INFORM);
+			msg.addReceiver(cars[i]);
+			msg.setOntology("other-pos");
+			String body = "";
+			boolean firstCar = true;
+			
+			for(int j = 0; j<carsPositions.length; j++) {
+				if(cars[j] != cars[i] && firstCar) {
+					body += carsPositions[j].x+","+carsPositions[j].y;
+					firstCar = false;
+				}else if(cars[j] != cars[i] && !firstCar) {
+					body += ":"+carsPositions[j].x+","+carsPositions[j].y;
+				}
+			}
+			
+			msg.setContent(body);
+			
+			send(msg);
+		}
 	}
 	
 }

@@ -20,6 +20,7 @@ public class TrackComponent extends JComponent {
 	private Point[] carsPositions = new Point[4];
 	private Color[] carsColors = {Color.RED,Color.BLUE,Color.GREEN,Color.YELLOW};
 	private Color trackColor = Color.BLACK;
+	private boolean drawCars = true;
 	
 	private BufferedImage image;
 	
@@ -44,8 +45,9 @@ public class TrackComponent extends JComponent {
 			image = (BufferedImage) createImage(getSize().width,getSize().height);
 			gr = (Graphics2D) image.createGraphics();
 			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-			clear();
 		}
+		
+		clear();
 		
 		g.drawImage(image, 0, 0, null);
 
@@ -104,11 +106,15 @@ public class TrackComponent extends JComponent {
 			}
 		}
 		
-		for(int i = 0; i<4; i++){
-			s = new Ellipse2D.Float(carsPositions[i].x,carsPositions[i].y,10,10);
-			gr.setPaint(carsColors[i]);
-			gr.draw(s);
-			gr.fill(s);
+		if(drawCars) {
+			
+			for(int i = 0; i<4; i++){
+				s = new Ellipse2D.Float(carsPositions[i].x,carsPositions[i].y,10,10);
+				gr.setPaint(carsColors[i]);
+				gr.draw(s);
+				gr.fill(s);
+			}
+			
 		}
 		
 		gr.setPaint(trackColor);
@@ -123,6 +129,15 @@ public class TrackComponent extends JComponent {
 	
 	public void updatePos(Point[] updatedPositions){
 		this.carsPositions = updatedPositions;
+		repaint();
+	}
+	
+	public void showHideCars() {
+		if(drawCars) {
+			drawCars = false;
+		}else if(!drawCars) {
+			drawCars = true;
+		}
 		repaint();
 	}
 	
