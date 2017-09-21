@@ -43,6 +43,7 @@ public class Car extends Agent{
 	private boolean checkLeft = false;
 	private boolean checkRight = false;
 	private boolean doCheckRight = false;
+	private boolean penalty = false;
 	private double force = 0.01;
 	private AID track = new AID("track", AID.ISLOCALNAME);
 	private AID judge = new AID("judge", AID.ISLOCALNAME);
@@ -167,9 +168,9 @@ public class Car extends Agent{
 				}else if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology() == "other-pos"){
 					storeOthers(msg.getContent());
 				}else if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty"){
-					curSpd = spd/2;
+					penalty = true;
 				}else if(msg!=null && msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology() == "penalty-end"){
-					curSpd = spd;
+					penalty = false;
 				}else {
 					switch(stage){
 					case 0:
@@ -178,7 +179,7 @@ public class Car extends Agent{
 							if(msg!=null && msg.getSender().getLocalName().equals(track.getLocalName()) && msg.getOntology()=="is-clear-response"){
 								if(msg.getContent().equals("clear")){
 									//action if clear
-									if(!checkOtherCars()) {
+									if(!checkOtherCars()||penalty) {
 										curSpd = 1;
 									}
 									pos.x += (int)Math.floor(curSpd*dirX);
@@ -200,7 +201,7 @@ public class Car extends Agent{
 								}else if(msg.getContent().equals("notclear")){
 									//action if not clear
 									//System.out.println("Not clear");
-									if(!checkOtherCars()) {
+									if(!checkOtherCars()||penalty) {
 										curSpd = 1;
 									}
 									pos.x += (int)Math.floor(curSpd*dirX);
@@ -265,7 +266,7 @@ public class Car extends Agent{
 							msg.setOntology("ended");
 							msg.setContent("");
 							send(msg);
-							stage = 4;
+							stage = 3;
 						}else{
 							stage = 0;
 						}

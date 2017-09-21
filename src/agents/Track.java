@@ -31,6 +31,7 @@ public class Track extends Agent{
 	private boolean startline = false;
 	private boolean errLoad = false;
 	private boolean errValidate = false;
+	private boolean showEnd = true;
 	private int counter = 0;
 	private Point[] carsPositions = new Point[4];
 	private char[][] trackASCII = new char[10][20];
@@ -238,9 +239,14 @@ public class Track extends Agent{
 						send(response);
 						
 					}
+
+					if(msg.getSender().getLocalName().equals(judge.getLocalName()) && msg.getOntology()=="final-times"){
+						tg.showStandings(msg.getContent());
+						showEnd = true;
+					}
 				}
 				
-				if(!started){
+				if(!started && !showEnd){
 					doDelete();
 				}
 			}
